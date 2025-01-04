@@ -33,5 +33,5 @@ The application will be available at `http://localhost:8081`
 
 The application runs on port 8081 by default. To use a different port, modify the port mapping in the docker run command:
 ```bash
-docker run -p <your-port>:8080 devops-app
+docker run -p <your-port>:8080 devops-m2-project
 ```

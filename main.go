@@ -10,6 +10,7 @@ import (
 type whoami struct {
 	Name  string
 	Title string
+	Students string
 	State string
 }
 

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-project-prod
+  labels:
+    app: my-app
+    environment: production
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: my-app
+      environment: production
+  template:
+    metadata:
+      labels:
+        app: my-app
+        environment: production
+    spec:
+      containers:
+      - name: my-app
+        image: your-dockerhub-username/your-image-name:latest
+        imagePullPolicy: Always # Kubernetes tirera toujours l'image depuis Docker Hub

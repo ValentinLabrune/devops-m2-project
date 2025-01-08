@@ -19,5 +19,5 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: your-dockerhub-username/your-image-name:latest
+        image: devopsefreiproject/devops_project:latest
         imagePullPolicy: Always # Kubernetes tirera toujours l'image depuis Docker Hub

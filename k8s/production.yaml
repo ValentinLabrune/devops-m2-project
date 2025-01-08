@@ -21,3 +21,5 @@ spec:
       - name: my-app
         image: devopsefreiproject/devops_project:latest
         imagePullPolicy: Always # Kubernetes tirera toujours l'image depuis Docker Hub
+      imagePullSecrets:
+      - name: my-dockerhub-secret

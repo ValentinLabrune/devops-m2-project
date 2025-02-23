@@ -1,29 +1,20 @@
+
 alertmanager:
   config:
     global:
       resolve_timeout: 5m
-      smtp_smarthost: 'smtp.gmail.com:587'
-      smtp_from: 'devopsgroupn4efrei@gmail.com'
-      smtp_auth_username: 'devopsgroupn4efrei@gmail.com'
-      smtp_auth_password: 'F$L^y5oM1rG%Gg%EwGw&xQZUE6QBu'
-      smtp_require_tls: true
     route:
-      group_by: ['alertname', 'severity']
-      group_wait: 30s
-      group_interval: 1m
+      group_wait: 20s
+      group_interval: 4m
       repeat_interval: 4h
       receiver: 'email-notifications'
     receivers:
       - name: 'email-notifications'
         email_configs:
           - to: 'adriaan.meulenbelt-zumer@efrei.net'
+            from: 'email-k8s-admin@alertmanager.com'
+            smarthost: 'smtp.gmail.com:587'
+            auth_username: 'devopsgroupn4efrei@gmail.com'
+            auth_password: 'F$L^y5oM1rG%Gg%EwGw&xQZUE6QBu'
+            auth_identity: 'devopsgroupn4efrei@gmail.com'
             send_resolved: true
-            subject: '[TEAM NAME] {{ .GroupLabels.alertname }} - {{ .Status }}'
-            html: |
-              {{ range .Alerts }}
-              <h3>Alert: {{ .Labels.alertname }}</h3>
-              <p><strong>Team:</strong> TEAM NUMBER 4</p>
-              <p><strong>Severity:</strong> {{ .Labels.severity }}</p>
-              <p><strong>Description:</strong> {{ .Annotations.description }}</p>
-              <p><strong>Started:</strong> {{ .StartsAt }}</p>
-              {{ end }}

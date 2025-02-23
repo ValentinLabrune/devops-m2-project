@@ -5,7 +5,7 @@ serverFiles:
         rules:
           - alert: InstanceDown
             expr: up == 0
-            for: 1m
+            for: 1s
             labels:
               severity: critical
             annotations:

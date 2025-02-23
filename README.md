@@ -108,16 +108,22 @@ docker run -p <your-port>:8080 devops-m2-project
 
 ### Configuring Alertmanager and Prometheus Alerting Rules
 
-1. Edit the `prometheus-alerts.yaml` file to configure the alerting rules
+1. Edit the `prometheus-alerts-rules.yaml` file to configure the alerting rules
 2. Apply the alerting rules to Prometheus:
 
 ```bash
-kubectl apply -f prometheus-alerts-rules.yaml
+helm upgrade --reuse-values -f prometheus-alerts-rules.yaml prometheus prometheus-community/prometheus
 ```
 
 3. Access the Prometheus web interface at `http://localhost:9090` and click on `Alerts` to view the alerts
 
 4. You can configure Alertmanager to send alerts to different channels like Slack, PagerDuty, etc.
 5. Edit the `alertmanager-config.yaml` file to configure the alerting channels
-6. 
+6. Apply the alerting channels to Alertmanager:
+
+```bash
+helm upgrade --reuse-values -f alertmanager-config.yaml prometheus prometheus-community/prometheus
+```
+
+7. Access the Alertmanager web interface at `http://localhost:9090` and click on `Alerts` to view the alerts
 

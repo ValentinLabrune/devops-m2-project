@@ -6,7 +6,7 @@ metadata:
     app: my-app
     environment: production
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app: my-app
@@ -16,10 +16,35 @@ spec:
       labels:
         app: my-app
         environment: production
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8080"
     spec:
       containers:
-      - name: my-app
-        image: devopsefreiproject/devops_project:latest
-        imagePullPolicy: Always # Kubernetes tirera toujours l'image depuis Docker Hub
+        - name: my-app
+          image: devopsefreiproject/devops_project:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
       imagePullSecrets:
-      - name: my-dockerhub-secret
+        - name: my-dockerhub-secret

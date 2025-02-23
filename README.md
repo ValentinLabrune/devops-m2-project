@@ -10,12 +10,14 @@ This repository contains a containerized application that can be built and run u
 ## Building the Application
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/ValentinLabrune/devops-m2-project
 cd devops-m2-project
 ```
 
 2. Build the Docker image:
+
 ```bash
 docker build -t devops-m2-project .
 ```
@@ -23,6 +25,7 @@ docker build -t devops-m2-project .
 ## Running the Application
 
 Run the container with the following command:
+
 ```bash
 docker run -p 8081:8080 devops-m2-project
 ```
@@ -31,7 +34,90 @@ The application will be available at `http://localhost:8081`
 
 ## Configuration
 
-The application runs on port 8081 by default. To use a different port, modify the port mapping in the docker run command:
+The application runs on port 8081 by default. To use a different port, modify the port mapping in the docker run
+command:
+
 ```bash
 docker run -p <your-port>:8080 devops-m2-project
 ```
+
+## Monitoring
+
+### Deploying Prometheus and Grafana
+
+1. add the following helm repositories:
+
+```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo add grafana https://grafana.github.io/helm-charts
+   helm repo update
+   ```
+
+2. Install Prometheus and Grafana:
+
+```bash
+   helm install prometheus prometheus-community/prometheus
+   helm install grafana grafana/grafana
+   ```
+
+3. Get the Prometheus server URL by running these commands in the same shell:
+
+```bash
+   export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+   kubectl --namespace default port-forward $POD_NAME 9090
+   ```
+
+4. Get the Grafana URL by running these commands in the same shell:
+    ```bash
+   export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=grafana" -o jsonpath="{.items[0].metadata.name}")
+   kubectl --namespace default port-forward $POD_NAME 3000
+   ```
+5. Access Prometheus at `http://localhost:9090` and Grafana at `http://localhost:3000`
+6. get the Grafana password by running the following command:
+
+```bash
+    kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+ ``` 
+
+8. Login to Grafana with the default credentials (username: admin, password: the password you got in the previous step)
+
+### Configuring Grafana
+
+1. Add Prometheus as a data source in Grafana:
+   - Open Grafana in your browser at `http://localhost:3000`
+   - Log in with the default credentials (username: admin, password: the password you got in the previous step)
+   - Click on connections in the left sidebar
+   - Click on `Data source` -> `Add data source`
+   - Select `Prometheus`
+   - Set the URL to `http://prometheus-server.default.svc.cluster.local`
+   - Click `Save & Test`
+
+
+2. Import the dashboard:
+    - Click on the `+` icon in the left sidebar
+    - Click on `Import`
+    - Enter the dashboard ID `1860` in the `Grafana.com Dashboard` field
+    - Select the Prometheus data source
+    - Click `Load`
+    - Click `Import`
+
+
+3. The dashboard will now be available in the dashboard list in Grafana
+
+4. You can now monitor the application using the Grafana dashboard
+
+### Configuring Alertmanager and Prometheus Alerting Rules
+
+1. Edit the `prometheus-alerts.yaml` file to configure the alerting rules
+2. Apply the alerting rules to Prometheus:
+
+```bash
+kubectl apply -f prometheus-alerts-rules.yaml
+```
+
+3. Access the Prometheus web interface at `http://localhost:9090` and click on `Alerts` to view the alerts
+
+4. You can configure Alertmanager to send alerts to different channels like Slack, PagerDuty, etc.
+5. Edit the `alertmanager-config.yaml` file to configure the alerting channels
+6. 
+

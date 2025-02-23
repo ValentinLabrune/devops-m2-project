@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
+	"github.com/prometheus/client_golang/prometheus"
+    "github.com/prometheus/client_golang/prometheus/promhttp"
+    "net/http"
 )
 
 type whoami struct {
@@ -14,15 +16,30 @@ type whoami struct {
 	State string
 }
 
+var (
+    httpRequestsTotal = prometheus.NewCounterVec(
+        prometheus.CounterOpts{
+            Name: "http_requests_total",
+            Help: "Total number of HTTP requests",
+        },
+        []string{"endpoint"},
+    )
+)
+
 func main() {
 	request1()
+}
+
+func init() {
+    // Metrics have to be registered to be exposed:
+    prometheus.MustRegister(httpRequestsTotal)
 }
 
 func whoAmI(response http.ResponseWriter, r *http.Request) {
 	who := []whoami{
 		whoami{Name: "Efrei Paris",
 			Title: "DevOps and Continous Deployment",
-			Students: "Labrune Valentin, Klein Julien",
+			Students: "Labrune Valentin, Klein Julien, Cédric Yoganathan, Adriaan MEULENBELT-ZUMER",
 			State: "FR",
 		},
 	}
@@ -44,10 +61,13 @@ func aboutMe(response http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: ", who)
 }
 
+
 func request1() {
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/aboutme", aboutMe)
 	http.HandleFunc("/whoami", whoAmI)
+	// Metrics endpoint
+    http.Handle("/metrics", promhttp.Handler())
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

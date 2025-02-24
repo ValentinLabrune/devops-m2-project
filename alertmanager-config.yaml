@@ -15,6 +15,6 @@ alertmanager:
             from: 'email-k8s-admin@alertmanager.com'
             smarthost: 'smtp.gmail.com:587'
             auth_username: 'devopsgroupn4efrei@gmail.com'
-            auth_password: 'F$L^y5oM1rG%Gg%EwGw&xQZUE6QBu'
+            auth_password: 'scmb wmdm nnsg dwat'
             auth_identity: 'devopsgroupn4efrei@gmail.com'
             send_resolved: true

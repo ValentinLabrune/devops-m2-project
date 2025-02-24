@@ -16,6 +16,7 @@ spec:
       labels:
         app: my-app
         environment: production
+        monitoring: enabled
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
@@ -48,3 +49,21 @@ spec:
             periodSeconds: 10
       imagePullSecrets:
         - name: my-dockerhub-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+  labels:
+    app: my-app
+    environment: production
+    monitoring: enabled
+spec:
+    ports:
+        - port: 8080
+          targetPort: 8080
+    selector:
+        app: my-app
+        environment: production
+    type: LoadBalancer

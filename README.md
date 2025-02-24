@@ -108,8 +108,15 @@ docker run -p <your-port>:8080 devops-m2-project
 
 ### Configuring Alertmanager and Prometheus Alerting Rules
 
-1. Edit the `prometheus-alerts-rules.yaml` file to configure the alerting rules
-2. Apply the alerting rules to Prometheus:
+1. Add the target to the Prometheus by applying the following command:
+
+```bash
+helm upgrade --reuse-values -f prometheus-targets.yaml prometheus prometheus-community/prometheus
+```
+2. Edit the `prometheus-alerts-rules.yaml` file to configure the alerting rules.
+
+
+3. Apply the alerting rules to Prometheus:
 
 ```bash
 helm upgrade --reuse-values -f prometheus-alerts-rules.yaml prometheus prometheus-community/prometheus

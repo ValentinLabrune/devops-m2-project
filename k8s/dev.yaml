@@ -20,6 +20,6 @@ spec:
       containers:
       - name: my-app
         image: my-app:latest
-        imagePullPolicy: IfNotPresent # Utilisation de l'image locale
-      ports:
-      - containerPort: 8081
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8081

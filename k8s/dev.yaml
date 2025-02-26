@@ -6,7 +6,6 @@ metadata:
     app: my-app
     environment: development
 spec:
-  replicas: 2
   replicas: 1
   selector:
     matchLabels:
@@ -18,9 +17,9 @@ spec:
         app: my-app
         environment: development
     spec:
+      imagePullSecrets:
+      - name: my-dockerhub-secret
       containers:
       - name: my-app
         image: devopsefreiproject/devops_project:latest
-        imagePullPolicy: Always # Kubernetes tirera toujours l'image depuis Docker Hub
-      imagePullSecrets:
-      - name: my-dockerhub-secret
+        imagePullPolicy: Always

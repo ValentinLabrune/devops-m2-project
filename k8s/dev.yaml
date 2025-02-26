@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: devops-project-dev
+  name: my-app
   labels:
     app: my-app
     environment: development
@@ -17,27 +17,40 @@ spec:
         app: my-app
         environment: development
     spec:
-      imagePullSecrets:
-        - name: my-dockerhub-secret
       containers:
         - name: my-app
           image: devopsefreiproject/devops_project:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8081  # Exposing port 8081 for the container
+            - containerPort: 8081
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: my-dockerhub-secret
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  name: my-app
   namespace: development
+  labels:
+    environment: development
 spec:
   selector:
     app: my-app
-    environment: development
   ports:
     - protocol: TCP
-      port: 8081  # Exposing port 8081 for the service
-      targetPort: 8081  # Forwarding to the container's port 8081
-  type: ClusterIP  # This makes the service accessible within the cluster
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP

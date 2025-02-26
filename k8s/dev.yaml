@@ -22,17 +22,17 @@ spec:
           image: devopsefreiproject/devops_project:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8081
+            - containerPort: 8080  # Keep this as the internal port in the container
           livenessProbe:
             httpGet:
               path: /
-              port: 8081
+              port: 8080  # Liveness probe checks the internal port
             initialDelaySeconds: 10
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
-              port: 8081
+              port: 8080  # Readiness probe checks the internal port
             initialDelaySeconds: 5
             periodSeconds: 10
       imagePullSecrets:
@@ -51,6 +51,6 @@ spec:
     app: my-app
   ports:
     - protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8081   # External port that you want to use to access the app
+      targetPort: 8080  # The internal port where the app is running
   type: ClusterIP

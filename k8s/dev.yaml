@@ -22,35 +22,17 @@ spec:
           image: devopsefreiproject/devops_project:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080  # Keep this as the internal port in the container
+            - containerPort: 8080
           livenessProbe:
             httpGet:
               path: /
-              port: 8080  # Liveness probe checks the internal port
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
-              port: 8080  # Readiness probe checks the internal port
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
-      imagePullSecrets:
-        - name: my-dockerhub-secret
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: my-app
-  namespace: development
-  labels:
-    environment: development
-spec:
-  selector:
-    app: my-app
-  ports:
-    - protocol: TCP
-      port: 8081   # External port that you want to use to access the app
-      targetPort: 8080  # The internal port where the app is running
-  type: ClusterIP
+      imagePullSe

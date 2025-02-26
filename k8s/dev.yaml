@@ -18,8 +18,26 @@ spec:
         environment: development
     spec:
       imagePullSecrets:
-      - name: my-dockerhub-secret
+        - name: my-dockerhub-secret
       containers:
-      - name: my-app
-        image: devopsefreiproject/devops_project:latest
-        imagePullPolicy: Always
+        - name: my-app
+          image: devopsefreiproject/devops_project:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081  # Exposing port 8081 for the container
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+  namespace: development
+spec:
+  selector:
+    app: my-app
+    environment: development
+  ports:
+    - protocol: TCP
+      port: 8081  # Exposing port 8081 for the service
+      targetPort: 8081  # Forwarding to the container's port 8081
+  type: ClusterIP  # This makes the service accessible within the cluster

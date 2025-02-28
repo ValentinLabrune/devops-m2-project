@@ -204,31 +204,15 @@ helm upgrade --reuse-values -f alertmanager-config.yaml prometheus prometheus-co
 1. Install Loki:
 
 ```bash
-helm install loki grafana/loki-stack
+helm install loki bitnami/grafana-loki
 ```
 
-2. Forward the port to 3100
-
-```bash
-kubectl port-forward service/loki 3100:3100
-```
-
-3. Test the connection with :
-
-```bash
-curl http://localhost:3100/ready
-```
-
-4. Test the connexion on the front:
-   - In Grafana, click on the gear icon (⚙️) in the left sidebar to access Configuration.
-   - Select Data Sources.
-   - Click on Add data source.
-   - Choose Loki from the list of available data sources.
+2. Test the connexion on the front:
+   - Open Grafana in your browser at `http://localhost:3000`
+   - Log in with the default credentials (username: admin, password: the password you got in the previous step)
+   - Click on connections in the left sidebar
+   - Click on `Data source` -> `Add data source`
+   - Choose Loki
    - In the HTTP section, set the URL to :
-     - http://loki:3100
-     - http://localhost:3100
-     - http://loki.default.svc.cluster.local:3100
-     - http://loki-stack:3100/
-     - loki.default.svc.cluster.local:3100
-     - Or the link of loki with (`kubectl get service`)
+     - http://loki-grafana-loki-gateway:80
    - Click Save & Test to verify the connection.

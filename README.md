@@ -185,3 +185,12 @@ helm install loki bitnami/grafana-loki
    - In the HTTP section, set the URL to :
      - http://loki-grafana-loki-gateway:80
    - Click Save & Test to verify the connection.
+   
+
+3. Add the Loki datasource to the Grafana dashboard:
+    - Click on the `+` icon in the left sidebar
+    - Click on `New Dashboard`
+    - Click on `Add Query`
+    - Select the Loki data source
+    - add the query ``{namespace="production"} |= `error``
+    - Click `Save & Test`

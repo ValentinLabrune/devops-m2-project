@@ -63,14 +63,14 @@ docker run -p <your-port>:8080 devops-m2-project
 3. Get the Prometheus server URL by running these commands in the same shell:
 
 ```bash
-   export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=prometheus,app.kubernetes.io/instance=prometheus" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace default port-forward $POD_NAME 9090
+   export POD_NAME=$(kubectl get pods --namespace default -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+   kubectl --namespace default port-forward $POD_NAME 9090
    ```
 
 4. Get the Grafana URL by running these commands in the same shell:
     ```bash
-   export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
-     kubectl --namespace default port-forward $POD_NAME 3000
+   export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=grafana" -o jsonpath="{.items[0].metadata.name}")
+   kubectl --namespace default port-forward $POD_NAME 3000
    ```
 5. Access Prometheus at `http://localhost:9090` and Grafana at `http://localhost:3000`
 6. get the Grafana password by running the following command:
@@ -134,3 +134,35 @@ helm upgrade --reuse-values -f alertmanager-config.yaml prometheus prometheus-co
 
 7. Access the Alertmanager web interface at `http://localhost:9090` and click on `Alerts` to view the alerts
 
+
+
+### Configuring Loki for log management
+
+1. Install Loki:
+```bash
+helm install loki grafana/loki-stack
+```
+
+2. Forward the port to 3100
+```bash
+kubectl port-forward service/loki 3100:3100
+```
+
+3. Test the connection with : 
+```bash
+curl http://localhost:3100/ready
+```
+
+4. Test the connexion on the front:
+   - In Grafana, click on the gear icon (⚙️) in the left sidebar to access Configuration.
+   - Select Data Sources.
+   - Click on Add data source.
+   - Choose Loki from the list of available data sources.
+   - In the HTTP section, set the URL to : 
+      - http://loki:3100  
+      - http://localhost:3100  
+      - http://loki.default.svc.cluster.local:3100 
+      - http://loki-stack:3100/
+      - loki.default.svc.cluster.local:3100
+      - Or the link of loki with (`kubectl get service`)
+   - Click Save & Test to verify the connection.

@@ -11,7 +11,7 @@ alertmanager:
     receivers:
       - name: 'email-notifications'
         email_configs:
-          - to: 'adriaan.meulenbelt-zumer@efrei.net'
+          - to: 'abdoul-aziz.zakari-madougou@intervenants.efrei.net'
             from: 'email-k8s-admin@alertmanager.com'
             smarthost: 'smtp.gmail.com:587'
             auth_username: 'devopsgroupn4efrei@gmail.com'

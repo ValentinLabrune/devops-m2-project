@@ -2,6 +2,9 @@
 
 This repository contains a containerized application that can be built, tested, and deployed using a Jenkins pipeline. The pipeline automates the following tasks: checking out the source code, building and pushing a Docker image to Docker Hub, deploying to a development environment using Minikube, testing the application, and finally deploying to production.
 
+Diagram of the pipeline:
+![diagram](./diagram.png)
+
 ## Prerequisites
 
 - Docker installed on your machine

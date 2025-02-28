@@ -154,7 +154,6 @@ helm install loki bitnami/grafana-loki
    - Click Save & Test to verify the connection.
 
 3. Add the Loki datasource to the Grafana dashboard:
-4. Import the Loki dashboard:
     - Click on the `+` icon in the left sidebar
     - Click on `New Dashboard`
     - Click on `Add Query`

@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+    environment {
+        APP_NAME = 'my-app'
+        IMAGE_NAME = 'my-app:latest'
+        DOCKERHUB_USERNAME = 'your-dockerhub-username'
+        DOCKERHUB_REPO = "devopsefreiproject/devops_project"
+    }
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: '*/main']],
+                        userRemoteConfigs: [[
+                            url: 'https://github.com/ValentinLabrune/devops-m2-project.git',
+                            credentialsId: 'gitAccess'
+                        ]]
+                    ])
+                }
+            }
+        }
+
+        stage('Build and Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('', 'my-dockerhub-secret') {
+                        def image = docker.build("${DOCKERHUB_REPO}:latest", "--file Dockerfile .")
+                        image.push('latest')
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Minikube - Development') {
+            steps {
+                script {
+                    sh 'kubectl config use-context minikube'
+                    sh "kubectl create namespace development || true"
+                    sh "kubectl apply -f k8s/dev.yaml -n development"
+                }
+            }
+        }
+
+        stage('Test Application') {
+            steps {
+                script {
+                    sleep 10 // Allow time for the deployment to initialize
+                    // Forward port 9090 from the service to localhost
+                    sh "kubectl port-forward svc/my-app-service 9090:9090 -n development &"
+                    sleep 5 // Wait for port forwarding to be ready
+                    def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:9090/whoami", returnStdout: true).trim()
+                    if (response != '200') {
+                        error("Test failed: Endpoint returned HTTP $response")
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Minikube - Production') {
+            steps {
+                script {
+                    sh "kubectl apply -f k8s/production.yaml -n default"
+                }
+            }
+        }
+    }
+}
